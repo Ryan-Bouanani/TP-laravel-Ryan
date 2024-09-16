@@ -2,8 +2,12 @@
 
 @section('content')
     @if (session('danger'))
-        <div class="alert alert-danger">
+        <div class="alert mt-3 alert-danger">
             {{ session('danger') }}
+        </div>
+    @elseif(session('success'))
+        <div class="alert mt-3 alert-success">
+            {{ session('success') }}
         </div>
     @endif
     <table class="table table-striped">
@@ -25,7 +29,12 @@
                     <form action="{{ route('addFavoritePlatToUser', Auth::user()->id) }}" method="POST">
                         @csrf
                         <input type ="hidden" name="plat_id" value="{{$plat->id}}">
-                        <button type="submit" class="add-to-favorites" >Ajouter aux favoris</button>
+
+                        @if(auth()->user()->favoritePlats()->where('plat_id', $plat->id)->exists())
+                            <button type="submit" class="add-to-favorites" >Ajouter aux favoris</button>
+                        @else
+                            <button type="submit" class="add-to-favorites" >Retiré des favoris</button>
+                        @endif
                     </form>
                 </td>
                 <td>{{ $plat->name }}</td>
