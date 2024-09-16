@@ -20,7 +20,6 @@ class PlatObserver
         // Si utilisateur connecté on envoie notif
         if (Auth::check()) {
             $user = Auth::user();
-            $user = User::all()->find($user->id);
             Mail::to($user->email)->send(new PublishedDish($plat, $user));
             $user->notify(new \App\Notifications\PublishedDish($plat, $user));
         }

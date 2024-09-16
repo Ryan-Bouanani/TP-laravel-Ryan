@@ -19,7 +19,8 @@ class UserSeeder extends Seeder
             'name' => 'Ryan Bouanani',
             'email' => 'ryan@example.com',
             'password' => Hash::make('ryan'),
-        ])->assignRole('admin');;
+        ])->assignRole('admin');
+        User::factory()->count(100)->create();
         foreach(User::all() as $user) {
             $user->favoritePlats()->attach(Plat::inRandomOrder()->take(rand(1,10))->pluck('id')->toArray());
             $user->assignRole('user');

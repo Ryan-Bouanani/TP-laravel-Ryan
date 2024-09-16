@@ -25,7 +25,7 @@ class PlatFactory extends Factory
             'name' => fake()->unique()->name(), // ->foodName()
             'description' => fake()->paragraph(5),
             'image' => fake()->imageUrl($width = 640, $height = 480),
-            'user_id' => User::factory(), // Associe un utilisateur aléatoire
+            'user_id' => User::pluck('id')->random(), // Associe un utilisateur aléatoire
         ];
     }
 }

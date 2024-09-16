@@ -47,7 +47,7 @@ class PlatControlller extends Controller
 
     public function store(Request $request) {
         Plat::create($this->validatePlatData($request));
-        return redirect()->route('plats.index')->with('success', 'Plat créé avec succès');;
+        return redirect()->route('plats.index')->with('success', 'Plat créé avec succès');
     }
 
 
