@@ -31,13 +31,7 @@ class PlatControlller extends Controller
 
     public function update(Request $request, string $slug) {
         $plat = Plat::all()->where('slug', $slug)->first();
-        $validatedData = $request->validate([
-            'name' => 'required|unique:plats,name,' . $plat->id, 'max:255',
-            "description" => "required|max:2048",
-            'image' => 'required|url',
-            'user_id' => 'required|exists:users,id',
-        ]);
-        $plat->update($validatedData);
+        $plat->update($this->validatePlatData($request, $plat));
 
         return redirect()->route('plats.index');
     }
@@ -52,14 +46,7 @@ class PlatControlller extends Controller
     }
 
     public function store(Request $request) {
-        $validatedData = $request->validate([
-            'name' => 'required|unique:plats,name,max:255',
-            "description" => "required|max:2048",
-            'image' => 'required|url',
-            'user_id' => 'required|exists:users,id',
-        ]);
-        // Créer un nouveau plat
-        Plat::create($validatedData);
+        Plat::create($this->validatePlatData($request));
         return redirect()->route('plats.index')->with('success', 'Plat créé avec succès');;
     }
 
@@ -72,5 +59,21 @@ class PlatControlller extends Controller
         } else {
             return redirect()->back()->with('danger', 'Vous n\'avez pas l\'autorisation de supprimer un plat');
         }
+    }
+
+    // Création de la fonction validatePlatData() afin de ne plus repeter le même code au sein des mes fonctions store() et update()
+    private function validatePlatData(Request $request, $plat = null): array {
+        $rules = [
+            'name' => 'required|unique:plats|max:255',
+            "description" => "required|max:2048",
+            'image' => 'required|url',
+            'user_id' => 'required|exists:users,id',
+        ];
+
+        if ($plat) {
+            $rules['name'] .= ',' . $plat->id;
+        }
+        return $request->validate($rules);
+
     }
 }
