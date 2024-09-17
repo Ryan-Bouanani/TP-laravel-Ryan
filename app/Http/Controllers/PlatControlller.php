@@ -24,25 +24,30 @@ class PlatControlller extends Controller
     }
 
     public function edit(Request $request, string $slug) {
+        if (!Auth::user()->hasPermissionTo('edit plats')) {
+            return redirect()->back()->with('danger', 'Vous n\'avez pas l\'autorisation de modifier un plat');
+        }
         $plat = Plat::all()->where('slug', $slug)->first();
+        if (!Auth::user()->plats()->where('slug', $slug)->exists()) {
+            return redirect()->back()->with('danger', 'Vous ne pouvez pas modifier un plat que vous n\'avez pas crée');
+        }
         $users = User::all();
         return view('plats.edit', compact("plat", "users"));
     }
 
     public function update(Request $request, string $slug) {
-        $plat = Plat::all()->where('slug', $slug)->first();
-        $plat->update($this->validatePlatData($request, $plat));
+            $plat = Plat::all()->where('slug', $slug)->first();
+            $plat->update($this->validatePlatData($request, $plat));
 
-        return redirect()->route('plats.index');
+            return redirect()->route('plats.index');
     }
 
     public function create(Request $request) {
-        if (Auth::user()->hasPermissionTo('create plats')) {
-            $users = User::all(); // Récupérer tous les utilisateurs pour le champ d'auteur
-            return view('plats.create', compact('users'));
-        } else {
+        if (!Auth::user()->hasPermissionTo('create plats')) {
             return redirect()->back()->with('danger', 'Vous n\'avez pas l\'autorisation de crée un plat');
         }
+        $users = User::all(); // Récupérer tous les utilisateurs pour le champ d'auteur
+        return view('plats.create', compact('users'));
     }
 
     public function store(Request $request) {

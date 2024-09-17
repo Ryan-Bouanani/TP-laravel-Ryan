@@ -18,11 +18,11 @@ return new class extends Migration
 
         Permission::create(['name' => 'create plats']);
         Permission::create(['name' => 'delete plats']);
-        Permission::create(['name' => 'show plats']);
+        Permission::create(['name' => 'edit plats']);
 
         // Adding permissions to admin and user
-        $admin->givePermissionTo("create plats", 'show plats', 'delete plats');
-        $user->givePermissionTo("show plats");
+        $admin->givePermissionTo("create plats", 'edit plats', 'delete plats');
+        $user->givePermissionTo("create plats", "edit plats");
     }
 
     /**

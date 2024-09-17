@@ -31,9 +31,9 @@
                         <input type ="hidden" name="plat_id" value="{{$plat->id}}">
 
                         @if(auth()->user()->favoritePlats()->where('plat_id', $plat->id)->exists())
-                            <button type="submit" class="add-to-favorites" >Ajouter aux favoris</button>
-                        @else
                             <button type="submit" class="add-to-favorites" >Retiré des favoris</button>
+                        @else
+                            <button type="submit" class="add-to-favorites" >Ajouter aux favoris</button>
                         @endif
                     </form>
                 </td>

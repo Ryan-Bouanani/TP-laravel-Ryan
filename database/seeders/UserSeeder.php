@@ -18,12 +18,10 @@ class UserSeeder extends Seeder
         User::factory()->create([
             'name' => 'Ryan Bouanani',
             'email' => 'ryan@example.com',
-            'password' => Hash::make('ryan'),
+            'password' => Hash::make('password'),
         ])->assignRole('admin');
-        User::factory()->count(100)->create();
-        foreach(User::all() as $user) {
-            $user->favoritePlats()->attach(Plat::inRandomOrder()->take(rand(1,10))->pluck('id')->toArray());
-            $user->assignRole('user');
-        }
+        User::factory()->count(200)->create();
+
+
     }
 }
