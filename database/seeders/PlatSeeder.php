@@ -14,7 +14,7 @@ class PlatSeeder extends Seeder
      */
     public function run(): void
     {
-        Plat::factory()->count(100)->create();
+        Plat::factory()->count(10)->create();
         foreach (User::all() as $user) {
             $platIds = Plat::inRandomOrder()->take(rand(1, 3))->pluck('id')->toArray();
             $user->favoritePlats()->syncWithoutDetaching($platIds);

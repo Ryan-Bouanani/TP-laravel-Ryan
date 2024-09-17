@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
             'email' => 'ryan@example.com',
             'password' => Hash::make('password'),
         ])->assignRole('admin');
-        User::factory()->count(200)->create();
+        User::factory()->count(19)->create();
 
 
     }
