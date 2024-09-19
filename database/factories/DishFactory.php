@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Plat;
+use App\Models\Dish;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use \Faker;
@@ -10,9 +10,9 @@ use \Faker;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
  */
-class PlatFactory extends Factory
+class DishFactory extends Factory
 {
-    protected $model = Plat::class;
+    protected $model = Dish::class;
     /**
      * Define the model's default state.
      *

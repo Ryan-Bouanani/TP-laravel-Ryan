@@ -2,7 +2,7 @@
 
 namespace App\Notifications;
 
-use App\Models\Plat;
+use App\Models\Dish;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -16,7 +16,7 @@ class PublishedDish extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct(public Plat $plat, public User $user)
+    public function __construct(public Dish $dish, public User $user)
     {
         //
     }
@@ -39,7 +39,7 @@ class PublishedDish extends Notification
         return (new MailMessage)
                     ->line('Bonjour, ' .  $this->user->name )
                     ->action('Notification Action', url('/'))
-                    ->line('Votre plat : "' . $this->plat->name . '" à bien été crée !');
+                    ->line('Votre dish : "' . $this->dish->name . '" à bien été crée !');
     }
 
     /**

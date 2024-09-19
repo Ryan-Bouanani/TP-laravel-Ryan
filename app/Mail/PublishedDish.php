@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Models\Plat;
+use App\Models\Dish;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -19,7 +19,7 @@ class PublishedDish extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public Plat $plat, public User $user)
+    public function __construct(public Dish $dish, public User $user)
     {}
 
     /**

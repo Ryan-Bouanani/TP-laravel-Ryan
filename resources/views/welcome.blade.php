@@ -1,6 +1,28 @@
 @extends('base')
 
 @section('content')
+    <!-- Formulaire de filtrage -->
+    <form action="{{ route('dishes.index') }}" method="GET" class="mb-4 mt-5">
+        <div class="row">
+            <div class="col-md-3">
+                <input type="text" name="name" class="form-control" placeholder="Nom du plat"
+                       value="{{ request('name') }}">
+            </div>
+            <div class="col-md-3">
+                <input type="text" name="creator" class="form-control" placeholder="Nom du créateur"
+                       value="{{ request('creator') }}">
+            </div>
+            <div class="col-md-3">
+                <input type="number" name="min_likes" class="form-control" placeholder="Likes minimum"
+                       value="{{ request('min_likes') }}">
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary">Filtrer</button>
+                <a href="{{ route('dishes.index') }}" class="btn btn-secondary">Réinitialiser</a>
+            </div>
+        </div>
+    </form>
+
     @if (session('danger'))
         <div class="alert mt-3 alert-danger">
             {{ session('danger') }}
@@ -13,41 +35,54 @@
     <table class="table table-striped mt-5">
         <thead>
         <tr>
+            <th scope="col">
+                <a href="{{ route('dishes.index', array_merge(request()->query(), ['sort' => 'id', 'order' => ($sortField == 'id' && $sortOrder === 'asc') ? 'desc' : 'asc'])) }}">Id</a>
+            </th>
             <th scope="col">Favoris</th>
-            <th scope="col">Titre</th>
-            <th scope="col">Créateur</th>
-            <th scope="col">Likes</th>
+            <th scope="col"><a
+                    href="{{ route('dishes.index', array_merge(request()->query(), ['sort' => 'name', 'order' => ($sortField === 'name' && $sortOrder === 'asc') ? 'desc' : 'asc'])) }}">Titre</a>
+            </th>
+            <th scope="col"><a
+                    href="{{ route('dishes.index', array_merge(request()->query(), ['sort' => 'user_id', 'order' => ($sortField === 'user_id' && $sortOrder === 'asc') ? 'desc' : 'asc'])) }}">Créateur</a>
+            </th>
+
+            <!--['name'=>request('name')-->
+            <th scope="col"><a
+                    href="{{ route('dishes.index', array_merge(request()->query(), ['sort' => 'likes', 'order' => ($sortField === 'likes' && $sortOrder === 'asc') ? 'desc' : 'asc'])) }}">Likes</a>
+            </th>
             <th scope="col">Détails</th>
             <th scope="col">Modifier</th>
             <th scope="col">Supprimer</th>
         </tr>
         </thead>
         <tbody>
-        @foreach ($plats as $plat)
+        @if(!$dishes->isEmpty())
+            @foreach ($dishes as $dish)
             <tr>
+                <td>{{ $dish->id }}</td>
                 <td>
-                    <form action="{{ route('addFavoritePlatToUser', Auth::user()->id) }}" method="POST">
+                    <form action="{{ route('addFavoriteDishToUser', Auth::user()->id) }}" method="POST">
                         @csrf
-                        <input type ="hidden" name="plat_id" value="{{$plat->id}}">
+                        <input type="hidden" name="dish_id" value="{{$dish->id}}">
 
-                        @if(auth()->user()->favoritePlats()->where('plat_id', $plat->id)->exists())
-                            <button type="submit" class="add-to-favorites" >Retiré des favoris</button>
+                        @if(auth()->user()->favoriteDishes()->where('dish_id', $dish->id)->exists())
+                            <button type="submit" class="add-to-favorites">Retiré des favoris</button>
                         @else
-                            <button type="submit" class="add-to-favorites" >Ajouter aux favoris</button>
+                            <button type="submit" class="add-to-favorites">Ajouter aux favoris</button>
                         @endif
                     </form>
                 </td>
-                <td>{{ $plat->name }}</td>
-                <td>{{ $plat->user->name }}</td>
-                <td>{{ $plat->favoriteByUsers->count() }}</td>
+                <td>{{ $dish->name }}</td>
+                <td>{{ $dish->user->name }}</td>
+                <td>{{ $dish->favoriteByUsers->count() }}</td>
                 <td>
-                    <a href="{{ route('plats.show', $plat->slug) }}">Voir</a>
+                    <a href="{{ route('dishes.show', $dish->slug) }}">Voir</a>
                 </td>
                 <td>
-                    <a href="{{ route('plats.edit', $plat->slug) }}">Modifier</a>
+                    <a href="{{ route('dishes.edit', $dish->slug) }}">Modifier</a>
                 </td>
                 <td>
-                    <form action="{{ route('plats.delete', $plat->slug) }}" method="POST">
+                    <form action="{{ route('dishes.delete', $dish->slug) }}" method="POST">
                         @csrf
                         @method("DELETE")
                         <button type="submit">Supprimer</button>
@@ -55,14 +90,17 @@
                 </td>
             </tr>
         @endforeach
+        @else
+            <tr><td colspan="8">Aucun plats n'a été trouvés</td></tr>
+        @endif
         </tbody>
     </table>
 
-    <a href="{{ route('plats.create') }}" class="btn btn-primary">Créer</a>
+    <a href="{{ route('dishes.create') }}" class="btn btn-primary">Créer</a>
 
-        <ul class="pagination justify-content-center">
-            {{ $plats->links() }}
-        </ul>
+    <ul class="pagination justify-content-center">
+        {{ $dishes->links() }}
+    </ul>
 
 @endsection
 

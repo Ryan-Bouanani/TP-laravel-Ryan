@@ -16,13 +16,13 @@ return new class extends Migration
         $admin = Role::create(['name' => 'admin']);
         $user = Role::create(['name' => 'user']);
 
-        Permission::create(['name' => 'create plats']);
-        Permission::create(['name' => 'delete plats']);
-        Permission::create(['name' => 'edit plats']);
+        Permission::create(['name' => 'create dishes']);
+        Permission::create(['name' => 'delete dishes']);
+        Permission::create(['name' => 'edit dishes']);
 
         // Adding permissions to admin and user
-        $admin->givePermissionTo("create plats", 'edit plats', 'delete plats');
-        $user->givePermissionTo("create plats", "edit plats");
+        $admin->givePermissionTo("create dishes", 'edit dishes', 'delete dishes');
+        $user->givePermissionTo("create dishes", "edit dishes");
     }
 
     /**

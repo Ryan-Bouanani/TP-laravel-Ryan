@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
-use App\Models\Plat;
+use App\Models\Dish;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -60,16 +60,16 @@ class ProfileController extends Controller
         return Redirect::to('/');
     }
 
-    public function addFavoritePlatToUser(Request $request, int $userId): RedirectResponse {
-        $plat_id = $request->input('plat_id');
+    public function addFavoriteDishToUser(Request $request, int $userId): RedirectResponse {
+        $dish_id = $request->input('dish_id');
         $user = User::find($userId);
 
-        // Si l'utilisateur à déjà le plats en favoris alors on l'enlève sinon on l'ajoute
-        if ($user->favoritePlats()->find($plat_id)) {
-            $user->favoritePlats()->detach([$plat_id]);
+        // Si l'utilisateur à déjà le dishes en favoris alors on l'enlève sinon on l'ajoute
+        if ($user->favoriteDishes()->find($dish_id)) {
+            $user->favoriteDishes()->detach([$dish_id]);
             $message = 'Plat retiré des favoris !';
         } else {
-            $user->favoritePlats()->attach([$plat_id]);
+            $user->favoriteDishes()->attach([$dish_id]);
             $message = 'Plat ajouté des favoris !';
         }
         return redirect()->back()->with('success', $message);

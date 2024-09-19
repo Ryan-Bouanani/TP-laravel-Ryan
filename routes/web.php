@@ -10,18 +10,18 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', [\App\Http\Controllers\PlatController::class, 'index'])->name('plats.index');
-    Route::get('/plats/{slug}', [\App\Http\Controllers\PlatController::class, 'show'])->name('plats.show');
-    Route::get('/edit/{slug}', [\App\Http\Controllers\PlatController::class, 'edit'])->name('plats.edit');
-    Route::put('/plats/{slug}', [\App\Http\Controllers\PlatController::class, 'update'])->name('plats.update');
-    Route::get('/create', [\App\Http\Controllers\PlatController::class, 'create'])->name('plats.create');
-    Route::post('/plats/store', [\App\Http\Controllers\PlatController::class, 'store'])->name('plats.store');
-    Route::delete('/{id}', [\App\Http\Controllers\PlatController::class, 'delete'])->name('plats.delete');
+    Route::get('/', [\App\Http\Controllers\DishController::class, 'index'])->name('dishes.index');
+    Route::get('/dishes/{slug}', [\App\Http\Controllers\DishController::class, 'show'])->name('dishes.show');
+    Route::get('/edit/{slug}', [\App\Http\Controllers\DishController::class, 'edit'])->name('dishes.edit');
+    Route::put('/dishes/{slug}', [\App\Http\Controllers\DishController::class, 'update'])->name('dishes.update');
+    Route::get('/create', [\App\Http\Controllers\DishController::class, 'create'])->name('dishes.create');
+    Route::post('/dishes/store', [\App\Http\Controllers\DishController::class, 'store'])->name('dishes.store');
+    Route::delete('/{id}', [\App\Http\Controllers\DishController::class, 'delete'])->name('dishes.delete');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::post('/users/{id}/favorite', [ProfileController::class, 'addFavoritePlatToUser'])->name('addFavoritePlatToUser');
+    Route::post('/users/{id}/favorite', [ProfileController::class, 'addFavoriteDishToUser'])->name('addFavoriteDishToUser');
 });
 
 require __DIR__.'/auth.php';

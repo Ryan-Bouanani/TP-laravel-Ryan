@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Plat;
+use App\Models\Dish;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;

@@ -48,16 +48,16 @@ class User extends Authenticatable
         ];
     }
 
-    public function favoritePlats() : BelongsToMany
+    public function favoriteDishes() : BelongsToMany
     {
-        return $this->belongsToMany(Plat::class, 'favorites', 'user_id', 'plat_id');
+        return $this->belongsToMany(Dish::class, 'favorites', 'user_id', 'dish_id');
 
     }
     /**
      * Get the dishes created by the user.
      */
-    public function plats()
+    public function dishes()
     {
-        return $this->hasMany(Plat::class);
+        return $this->hasMany(Dish::class);
     }
 }

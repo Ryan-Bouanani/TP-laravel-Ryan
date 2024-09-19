@@ -10,7 +10,7 @@
 
         <div class="message">
             <p>Bonjour, {{ $user->name }}</p>
-            <p>Votre plat : "{{ $plat->name }}" à bien été crée !</p>
+            <p>Votre plat : "{{ $dish->name }}" à bien été crée !</p>
         </div>
     </div>
     </body>

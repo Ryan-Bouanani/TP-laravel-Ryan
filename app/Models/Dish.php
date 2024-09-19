@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Observers\PlatObserver;
+use App\Observers\DishObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Sluggable\HasSlug;
@@ -12,8 +12,8 @@ use Illuminate\Database\Eloquent\Model;
 use \Sagalbot\Encryptable\Encryptable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-#[ObservedBy([PlatObserver::class])]
-class Plat extends Model
+#[ObservedBy([DishObserver::class])]
+class Dish extends Model
 {
     use HasFactory, HasSlug, Encryptable;
     /**
@@ -21,7 +21,7 @@ class Plat extends Model
      *
      * @var string
      */
-   // protected $table = 'plats';
+   // protected $table = 'dishes';
 
     protected $fillable = [
         'name',
