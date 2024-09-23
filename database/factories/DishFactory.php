@@ -25,8 +25,15 @@ class DishFactory extends Factory
             'name' => fake()->unique()->name(), // ->foodName()
             'description' => fake()->paragraph(5),
             'image' => fake()->imageUrl($width = 640, $height = 480),
-            'user_id' => User::pluck('id')->random(), // Associe un utilisateur aléatoire
+            // 'user_id' => User::pluck('id')->random(); // Associe un utilisateur aléatoire
         ];
+    }
+
+    public function configure(): static
+    {
+        return $this->afterMaking(function (Dish $dish) {
+            $dish->user()->associate(User::factory()->createOne());
+        });
     }
 }
 

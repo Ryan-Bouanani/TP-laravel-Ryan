@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreDishRequest;
+use App\Http\Requests\UpdateDishRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Dish;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 
 class DishController extends Controller
 {
@@ -20,78 +23,52 @@ class DishController extends Controller
         $sortField = $filtersSortingArray['sortField'];
         $sortOrder = $filtersSortingArray['sortOrder'];
 
-        $dishes = $query->paginate(5)->withQueryString();
-
         // Générer les liens de pagination avec les paramètres de filtre
-        //$dishes->appends($request->all())->links();
+        $dishes = $query->paginate(5)->withQueryString();
 
         return view('welcome', compact('dishes', 'sortField', 'sortOrder'));
     }
 
-    public function show(Request $request, string $slug) {
-        $dish = Dish::where('slug', $slug)->firstOrFail();
+    public function show(Dish $dish) {
         return view('dishes.show', compact("dish"));
     }
 
-    public function edit(Request $request, string $slug)
+    public function edit(Dish $dish)
     {
-        if (!Auth::user()->hasPermissionTo('edit dishes')) {
-            return redirect()->back()->with('danger', 'Vous n\'avez pas l\'autorisation de modifier un plat');
-        }
-
-        $dish = Dish::all()->where('slug', $slug)->firstOrFail();
-
-        if (!Auth::user()->dishes()->where('slug', $slug)->exists()) {
-            return redirect()->back()->with('danger', 'Vous ne pouvez pas modifier un plat que vous n\'avez pas crée');
-        }
         $users = User::all();
 
         return view('dishes.edit', compact("dish", "users"));
     }
 
-    public function update(Request $request, string $slug) {
+    public function update(UpdateDishRequest $request, Dish $dish) {
 
-        $dish = Dish::where('slug', $slug)->firstOrFail();
-        $dish->update($this->validateDishData($request, $dish));
+        $dish->update($request->validated());
 
-        return redirect()->route('dishes.index')->with('success', 'Dish mis à jour avec succès');
+        return redirect()->route('dishes.index')->with('success', 'Plat mis à jour avec succès');
     }
 
-    public function create(Request $request) {
-        if (!Auth::user()->hasPermissionTo('create dishes')) {
-            return redirect()->back()->with('danger', 'Vous n\'avez pas l\'autorisation de crée un plat');
-        }
-        $users = User::all(); // Récupérer tous les utilisateurs pour le champ d'auteur
+    public function create() {
+
+        $users = User::all(); // Récupérer tous les utilisateurs pour le champ créateur
         return view('dishes.create', compact('users'));
     }
 
-    public function store(Request $request) {
-        $data = $this->validatedDishData($request);
-        Dish::create($data);
-        return redirect()->route('dishes.index')->with('success', 'Dish créé avec succès');
+    public function store(StoreDishRequest $request) {
+
+        Dish::create(array_merge($request->validated(), ['user_id' => Auth::id()]));
+
+        return redirect()->route('dishes.index')->with('success', 'Plat créé avec succès');
     }
 
+    public function destroy(Dish $dish) {
 
-    public function delete(string $slug) {
-        if (!Auth::user()->hasPermissionTo('delete dishes')) {
-            return redirect()->back()->with('danger', 'Vous n\'avez pas l\'autorisation de supprimer un plat');
+        // Si l'utilisateur n'est pas admin, il ne peut supprimer que ses propres plats
+        if (!Auth::user()->hasRole('admin') && $dish->user->id !== Auth::id()) {
+            return redirect()->back()->with('danger', 'Vous ne pouvez pas supprimer un plat que vous n\'avez pas créé');
         }
 
-        $dish = Dish::where('slug', $slug)->firstOrFail();
         $dish->delete();
-        return redirect()->back()->with('success', 'Le dishes a bien été supprimé');
-    }
-
-    // Création de la fonction validateDishData() afin de ne plus repeter le même code au sein des mes fonctions store() et update()
-    private function validateDishData(Request $request, ?Dish $dish = null): array {
-        $rules = [
-            'name' => ['required', 'max:255',  $dish ? "unique:dishes,name,{$dish->id}" : 'unique:dishes'],
-            "description" => "required|max:2048",
-            'image' => 'required|url',
-            'user_id' => 'required|exists:users,id',
-        ];
-
-        return $request->validate($rules);
+        return redirect()->back()->with('success', 'Le plat a bien été supprimé');
     }
 
     private function applySearchFilters($query, $request) {

@@ -45,21 +45,26 @@
                             </div>
 
                             {{--  Créateur du dishes --}}
-                            <div class="form-group">
-                                <label for="user_id">Créateur du plat</label>
-                                <select class="form-control @error('user_id') is-invalid @enderror" id="user_id" name="user_id">
-                                    @foreach ($users as $user)
-                                        <option value="{{ $user->id }}" >
-                                            {{ $user->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('user_id')
-                                <span class="invalid-feedback" role="alert">
+                            {{--  Créateur du dishes --}}
+                            @if(Auth::user()->hasRole('admin'))
+                                <div class="form-group">
+                                    <label for="user_id">Créateur du plat</label>
+                                    <select class="form-control @error('user_id') is-invalid @enderror" id="user_id" name="user_id">
+                                        @foreach ($users as $user)
+                                            <option value="{{ $user->id }}" >
+                                                {{ $user->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('user_id')
+                                    <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
-                                @enderror
-                            </div>
+                                    @enderror
+                                </div>
+                            @else
+                                <p class="mt-3">Creator: {{ Auth::user()->name }}</p>
+                            @endif
                             <button type="submit" class="btn btn-primary">Créer</button>
                         </form>
                     </div>

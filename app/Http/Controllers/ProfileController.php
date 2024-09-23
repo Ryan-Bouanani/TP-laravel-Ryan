@@ -60,9 +60,8 @@ class ProfileController extends Controller
         return Redirect::to('/');
     }
 
-    public function addFavoriteDishToUser(Request $request, int $userId): RedirectResponse {
+    public function addFavoriteDishToUser(Request $request, User $user): RedirectResponse {
         $dish_id = $request->input('dish_id');
-        $user = User::find($userId);
 
         // Si l'utilisateur à déjà le dishes en favoris alors on l'enlève sinon on l'ajoute
         if ($user->favoriteDishes()->find($dish_id)) {

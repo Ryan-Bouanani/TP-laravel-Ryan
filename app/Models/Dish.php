@@ -4,7 +4,9 @@ namespace App\Models;
 
 use App\Observers\DishObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Crypt;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 #[ObservedBy([DishObserver::class])]
 class Dish extends Model
 {
-    use HasFactory, HasSlug, Encryptable;
+    use HasFactory, HasSlug;
     /**
      * The table associated with the model.
      *
@@ -23,6 +25,10 @@ class Dish extends Model
      */
    // protected $table = 'dishes';
 
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
     protected $fillable = [
         'name',
         'description',
@@ -30,6 +36,16 @@ class Dish extends Model
         'user_id'
     ];
 
+    /**
+     * Add dish description encryptable
+     */
+    protected function description(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value) => Crypt::decryptString($value),
+            set: fn (string $value) => Crypt::encryptString($value),
+        );
+    }
 
     /**
      * Get the options for generating the slug.
@@ -40,13 +56,6 @@ class Dish extends Model
             ->generateSlugsFrom('name')
             ->saveSlugsTo('slug');
     }
-
-    /**
-     * The attributes that should be encrypted when stored.
-     *
-     * @var array
-     */
-    protected $encryptable = [ 'description' ];
 
 
     public function favoriteByUsers() : BelongsToMany

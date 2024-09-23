@@ -11,6 +11,9 @@
                         <form method="POST" action="{{ route('dishes.update', $dish->slug) }}">
                             @csrf
                             @method('PUT')
+
+                            <input type="hidden" name="id" value="{{ $dish->id  }}">
+
                             {{--  Nom du dishes --}}
                             <div class="form-group">
                                 <label for="name">Nom du plat</label>
@@ -45,21 +48,25 @@
                             </div>
 
                             {{--  Créateur du dishes --}}
-                            <div class="form-group">
-                                <label for="user_id">Créateur du plat</label>
-                                <select class="form-control @error('user_id') is-invalid @enderror" id="user_id" name="user_id">
-                                    @foreach ($users as $user)
-                                        <option value="{{ $user->id }}" {{ $dish->user_id == $user->id ? 'selected' : '' }}>
-                                            {{ $user->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('user_id')
-                                <span class="invalid-feedback" role="alert">
+                            @if(Auth::user()->hasRole('admin'))
+                                <div class="form-group">
+                                    <label for="user_id">Créateur du plat</label>
+                                    <select class="form-control @error('user_id') is-invalid @enderror" id="user_id" name="user_id">
+                                        @foreach ($users as $user)
+                                            <option value="{{ $user->id }}" {{ $dish->user_id == $user->id ? 'selected' : '' }}>
+                                                {{ $user->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('user_id')
+                                    <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
-                                @enderror
-                            </div>
+                                    @enderror
+                                </div>
+                            @else
+                                <p class="mt-3">Creator: {{ $dish->user->name }}</p>
+                            @endif
 
                             <button type="submit" class="btn btn-primary">Modifier</button>
                         </form>

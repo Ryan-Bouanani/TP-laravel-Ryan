@@ -47,8 +47,8 @@
             </th>
 
             <!--['name'=>request('name')-->
-            <th scope="col"><a
-                    href="{{ route('dishes.index', array_merge(request()->query(), ['sort' => 'likes', 'order' => ($sortField === 'likes' && $sortOrder === 'asc') ? 'desc' : 'asc'])) }}">Likes</a>
+            <th scope="col">
+                <a href="{{ route('dishes.index', array_merge(request()->query(), ['sort' => 'likes', 'order' => ($sortField === 'likes' && $sortOrder === 'asc') ? 'desc' : 'asc'])) }}">Likes</a>
             </th>
             <th scope="col">Détails</th>
             <th scope="col">Modifier</th>
@@ -79,10 +79,12 @@
                     <a href="{{ route('dishes.show', $dish->slug) }}">Voir</a>
                 </td>
                 <td>
-                    <a href="{{ route('dishes.edit', $dish->slug) }}">Modifier</a>
+                    @if(Auth::user()->hasRole('admin') || $dish->user->id === Auth::id())
+                        <a href="{{ route('dishes.edit', $dish->slug) }}">Modifier</a>
+                    @endif
                 </td>
                 <td>
-                    <form action="{{ route('dishes.delete', $dish->slug) }}" method="POST">
+                    <form action="{{ route('dishes.destroy', $dish->slug) }}" method="POST">
                         @csrf
                         @method("DELETE")
                         <button type="submit">Supprimer</button>

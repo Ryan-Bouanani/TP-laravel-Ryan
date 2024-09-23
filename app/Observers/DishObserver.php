@@ -2,10 +2,8 @@
 
 namespace App\Observers;
 
-use App\Mail\PublishedDish;
+use App\Jobs\SendDishCreatedNotification;
 use App\Models\Dish;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 
 class DishObserver
 {
@@ -14,14 +12,7 @@ class DishObserver
      */
     public function created(Dish $dish): void
     {
-        // $user = Auth::user()?: $dish->user()->first();
-
-        // Si utilisateur connecté on envoie notif
-        if (Auth::check()) {
-            $user = Auth::user();
-            Mail::to($user->email)->send(new PublishedDish($dish, $user));
-            $user->notify(new \App\Notifications\PublishedDish($dish, $user));
-        }
+        SendDishCreatedNotification::dispatchSync($dish);
     }
 
     /**

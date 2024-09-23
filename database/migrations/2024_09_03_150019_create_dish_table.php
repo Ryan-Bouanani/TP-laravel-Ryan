@@ -14,10 +14,10 @@ return new class extends Migration
     {
         Schema::create('dishes', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->nullable(false)->unique();
-            $table->string('slug')->nullable(false)->unique();
-            $table->text('description')->nullable(false);
-            $table->string('image')->nullable(false);
+            $table->string('name')->nullable()->unique();
+            $table->string('slug')->nullable()->unique();
+            $table->text('description')->nullable();
+            $table->string('image')->nullable();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
