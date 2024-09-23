@@ -33,7 +33,8 @@ class Dish extends Model
         'name',
         'description',
         'image',
-        'user_id'
+        'user_id',
+        'created_at'
     ];
 
     /**

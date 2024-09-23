@@ -21,13 +21,5 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
         ])->assignRole('admin');
         User::factory()->count(19)->create();
-
-        foreach (User::all() as $user) {
-            $dishesId = Dish::inRandomOrder()->take(rand(1, 3))->pluck('id')->toArray();
-            $user->favoriteDishes()->syncWithoutDetaching($dishesId);
-            $user->assignRole('user');
-        }
-
-
     }
 }

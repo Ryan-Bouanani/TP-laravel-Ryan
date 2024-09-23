@@ -25,6 +25,7 @@ class DishFactory extends Factory
             'name' => fake()->unique()->name(), // ->foodName()
             'description' => fake()->paragraph(5),
             'image' => fake()->imageUrl($width = 640, $height = 480),
+            // 'created_at' => fake()->dateTimeBetween('-2 months', 'now'),
             // 'user_id' => User::pluck('id')->random(); // Associe un utilisateur aléatoire
         ];
     }
