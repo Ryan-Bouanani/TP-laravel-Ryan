@@ -13,6 +13,7 @@ class UpdateDishRequest extends FormRequest
     public function authorize(): bool
     {
         $dish = Dish::find($this->id);
+//        $dish = Dish::where('id', $this->id)->firstOrFail();
         return $dish->user_id === request()->user()->id || request()->user()->hasRole('admin');
     }
 

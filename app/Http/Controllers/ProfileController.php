@@ -69,8 +69,8 @@ class ProfileController extends Controller
             $message = 'Plat retiré des favoris !';
         } else {
             $user->favoriteDishes()->attach([$dish_id]);
-            $message = 'Plat ajouté des favoris !';
+            $message = 'Plat ajouté aux favoris !';
         }
-        return redirect()->back()->with('success', $message);
+        return redirect()->route('dishes.index')->with('success', $message);
     }
 }

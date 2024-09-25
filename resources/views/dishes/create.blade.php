@@ -45,7 +45,6 @@
                             </div>
 
                             {{--  Créateur du dishes --}}
-                            {{--  Créateur du dishes --}}
                             @if(Auth::user()->hasRole('admin'))
                                 <div class="form-group">
                                     <label for="user_id">Créateur du plat</label>
@@ -63,6 +62,7 @@
                                     @enderror
                                 </div>
                             @else
+                                <input type="hidden" name="user_id" value="{{ Auth::user()->id  }}">
                                 <p class="mt-3">Creator: {{ Auth::user()->name }}</p>
                             @endif
                             <button type="submit" class="btn btn-primary">Créer</button>

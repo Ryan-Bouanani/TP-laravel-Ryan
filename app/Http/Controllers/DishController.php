@@ -34,9 +34,12 @@ class DishController extends Controller
 
     public function edit(Dish $dish)
     {
-        $users = User::all();
+        if(Auth::user()->hasRole('admin')) {
+            $users = User::all();
+            return view('dishes.edit', compact("dish", "users"));
+        }
 
-        return view('dishes.edit', compact("dish", "users"));
+        return view('dishes.edit', compact("dish"));
     }
 
     public function update(UpdateDishRequest $request, Dish $dish) {
@@ -48,13 +51,17 @@ class DishController extends Controller
 
     public function create() {
 
-        $users = User::all(); // Récupérer tous les utilisateurs pour le champ créateur
-        return view('dishes.create', compact('users'));
+        if(Auth::user()->hasRole('admin')) {
+            $users = User::all();
+            return view('dishes.create', compact("users"));
+        }
+
+        return view('dishes.create');
     }
 
     public function store(StoreDishRequest $request) {
 
-        Dish::create(array_merge($request->validated(), ['user_id' => Auth::id()]));
+        Dish::create($request->validated());
 
         return redirect()->route('dishes.index')->with('success', 'Plat créé avec succès');
     }
@@ -63,11 +70,11 @@ class DishController extends Controller
 
         // Si l'utilisateur n'est pas admin, il ne peut supprimer que ses propres plats
         if (!Auth::user()->hasRole('admin') && $dish->user->id !== Auth::id()) {
-            return redirect()->back()->with('danger', 'Vous ne pouvez pas supprimer un plat que vous n\'avez pas créé');
+            return redirect()->route('dishes.index')->with('danger', 'Vous ne pouvez pas supprimer un plat que vous n\'avez pas créé');
         }
 
         $dish->delete();
-        return redirect()->back()->with('success', 'Le plat a bien été supprimé');
+        return redirect()->route('dishes.index')->with('success', 'Le plat a bien été supprimé');
     }
 
     private function applySearchFilters($query, $request) {
@@ -91,8 +98,6 @@ class DishController extends Controller
            $query->withCount('favoriteByUsers')->orderBy('favorite_By_Users_count', $request->input('order'));
 
         }
-
-
     }
 
     private function applySorting($query, $request) {

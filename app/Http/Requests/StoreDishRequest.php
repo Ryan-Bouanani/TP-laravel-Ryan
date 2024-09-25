@@ -21,11 +21,12 @@ class StoreDishRequest extends FormRequest
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
-    {
+    {;
         return [
             'name' => ['required', 'max:255', 'unique:dishes'],
             "description" => "required|max:2048",
             'image' => 'required|url',
+            'user_id' => 'required|exists:users,id',
         ];
     }
 }
