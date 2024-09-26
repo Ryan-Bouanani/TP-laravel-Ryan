@@ -13,7 +13,7 @@ class FilterDishesTest extends TestCase
     use refreshDatabase;
 
     /**
-     * Tests the filter by name functionality
+     * Tests the filter by id functionality
      */
     public function test_filter_order_desc_by_id()
     {

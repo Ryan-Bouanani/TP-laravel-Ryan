@@ -11,14 +11,20 @@ use Illuminate\Support\Facades\Auth;
 
 class DishController extends Controller
 {
+    /**
+     * Display a listing of the dishes.
+     *
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
     public function index(Request $request) {
         $query = Dish::query();
 
         // Apply filters based on search terms
-        $this->applySearchFilters($query, $request);
+        $this->filterDishes($query, $request);
 
         // Apply sorting based on request parameters
-        $filtersSortingArray = $this->applySorting($query, $request);
+        $filtersSortingArray = $this->sortDishes($query, $request);
         $sortField = $filtersSortingArray['sortField'];
         $sortOrder = $filtersSortingArray['sortOrder'];
 
@@ -28,10 +34,24 @@ class DishController extends Controller
         return view('welcome', compact('dishes', 'sortField', 'sortOrder'));
     }
 
+
+    /**
+     * Display the specified dish.
+     *
+     * @param Dish $dish
+     * @return \Illuminate\View\View
+     */
     public function show(Dish $dish) {
         return view('dishes.show', compact("dish"));
     }
 
+
+    /**
+     * Show the form for editing the specified dish.
+     *
+     * @param Dish $dish
+     * @return \Illuminate\View\View
+     */
     public function edit(Dish $dish)
     {
         if(Auth::user()->hasRole('admin')) {
@@ -42,6 +62,14 @@ class DishController extends Controller
         return view('dishes.edit', compact("dish"));
     }
 
+
+    /**
+     * Update the specified dish in database.
+     *
+     * @param UpdateDishRequest $request
+     * @param Dish $dish
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function update(UpdateDishRequest $request, Dish $dish) {
 
         $dish->update($request->validated());
@@ -49,6 +77,12 @@ class DishController extends Controller
         return redirect()->route('dishes.index')->with('success', 'Plat mis à jour avec succès');
     }
 
+
+    /**
+     * Show the form for creating a new dish.
+     *
+     * @return \Illuminate\View\View
+     */
     public function create() {
 
         if(Auth::user()->hasRole('admin')) {
@@ -59,6 +93,16 @@ class DishController extends Controller
         return view('dishes.create');
     }
 
+
+
+    /**
+     * Store a new created dish in database.
+     *
+     * This method handles the creation of a new dish.
+     *
+     * @param StoreDishRequest $request The validated request containing dish data
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(StoreDishRequest $request) {
 
         Dish::create($request->validated());
@@ -66,6 +110,13 @@ class DishController extends Controller
         return redirect()->route('dishes.index')->with('success', 'Plat créé avec succès');
     }
 
+
+    /**
+     * Remove the specified dish from storage.
+     *
+     * @param Dish $dish The dish model to be deleted
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function destroy(Dish $dish) {
 
         // Si l'utilisateur n'est pas admin, il ne peut supprimer que ses propres plats
@@ -77,7 +128,14 @@ class DishController extends Controller
         return redirect()->route('dishes.index')->with('success', 'Le plat a bien été supprimé');
     }
 
-    private function applySearchFilters($query, $request) {
+
+    /**
+     * Apply search filters to the dish query.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param Request $request
+     */
+    private function filterDishes($query, $request) {
         if ($request->filled('name')) {
             $query->where('name', 'like', '%' . $request->input('name') . '%');
         }
@@ -100,7 +158,15 @@ class DishController extends Controller
         }
     }
 
-    private function applySorting($query, $request) {
+
+    /**
+     * Apply sorting to the dish query.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param Request $request
+     * @return array
+     */
+    private function sortDishes($query, $request) {
         $sortField = $request->input('sort', 'id');
         $sortOrder = $request->input('order', 'asc');
 
