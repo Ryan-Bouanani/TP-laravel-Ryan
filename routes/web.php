@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\DishController;
 
 
-
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

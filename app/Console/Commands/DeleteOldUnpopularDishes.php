@@ -27,6 +27,7 @@ class DeleteOldUnpopularDishes extends Command
      */
     public function handle()
     {
+        // Delete dishes that have had less than 5 likes in 1 month (command "app:delete-old-unpopular-dishes")
         $deletedCount = Dish::where("created_at" ,'<', now()->submonths())
             ->has('favoriteByUsers',  '<', 5)
             ->delete();

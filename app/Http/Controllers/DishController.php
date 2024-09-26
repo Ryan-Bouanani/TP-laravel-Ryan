@@ -31,7 +31,7 @@ class DishController extends Controller
         // Générer les liens de pagination avec les paramètres de filtre
         $dishes = $query->paginate(5)->withQueryString();
 
-        return view('welcome', compact('dishes', 'sortField', 'sortOrder'));
+        return view('index', compact('dishes', 'sortField', 'sortOrder'));
     }
 
 

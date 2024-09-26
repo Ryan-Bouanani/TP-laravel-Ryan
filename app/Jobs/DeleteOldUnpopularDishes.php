@@ -27,6 +27,7 @@ class DeleteOldUnpopularDishes implements ShouldQueue
      */
     public function handle(): void
     {
+        // Delete dishes that have had less than 5 likes in 1 month
         $deletedCount = Dish::where("created_at" ,'<', now()->submonths())
             ->has('favoriteByUsers',  '<', 5)
             ->delete();

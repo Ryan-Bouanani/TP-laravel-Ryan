@@ -28,7 +28,7 @@ class FilterDishesTest extends TestCase
 
         // Verify the response
         $response->assertStatus(200);
-        $response->assertViewIs('welcome');
+        $response->assertViewIs('index');
         $response->assertViewHas('dishes');
 
         // Verify the sorting order
@@ -51,7 +51,7 @@ class FilterDishesTest extends TestCase
 
         // Verify the response
         $response->assertStatus(200);
-        $response->assertViewIs('welcome');
+        $response->assertViewIs('index');
         $response->assertViewHas('dishes');
 
         // Verify the sorting order
@@ -77,7 +77,7 @@ class FilterDishesTest extends TestCase
             ->get(route('dishes.index', ['name' => 'Plat 1']));
 
         $response->assertStatus(200);
-        $response->assertViewIs('welcome');
+        $response->assertViewIs('index');
         $response->assertViewHas('dishes');
 
         // Vérifier que seul le plat 1 est retourné
@@ -98,7 +98,7 @@ class FilterDishesTest extends TestCase
 
         // Verify the response
         $response->assertStatus(200);
-        $response->assertViewIs('welcome');
+        $response->assertViewIs('index');
         $response->assertViewHas('dishes');
 
         // Verify the sorting order
@@ -121,7 +121,7 @@ class FilterDishesTest extends TestCase
 
         // Verify the response
         $response->assertStatus(200);
-        $response->assertViewIs('welcome');
+        $response->assertViewIs('index');
         $response->assertViewHas('dishes');
 
         // Verify the sorting order
@@ -171,7 +171,7 @@ class FilterDishesTest extends TestCase
 
         // Verify the response
         $response->assertStatus(200);
-        $response->assertViewIs('welcome');
+        $response->assertViewIs('index');
         $response->assertViewHas('dishes');
 
         // Verify the sorting order
@@ -201,7 +201,7 @@ class FilterDishesTest extends TestCase
 
         // Verify the response
         $response->assertStatus(200);
-        $response->assertViewIs('welcome');
+        $response->assertViewIs('index');
         $response->assertViewHas('dishes');
 
         // Verify the sorting order
@@ -229,7 +229,7 @@ class FilterDishesTest extends TestCase
             ->get(route('dishes.index', ['min_likes' => 4]));
 
         $response->assertStatus(200);
-        $response->assertViewIs('welcome');
+        $response->assertViewIs('index');
         $response->assertViewHas('dishes');
 
         // Vérifier que seul le plat avec 5 likes est retourné
@@ -255,7 +255,7 @@ class FilterDishesTest extends TestCase
 
         // Verify the response
         $response->assertStatus(200);
-        $response->assertViewIs('welcome');
+        $response->assertViewIs('index');
         $response->assertViewHas('dishes');
 
         // Verify the sorting order
@@ -282,7 +282,7 @@ class FilterDishesTest extends TestCase
 
         // Verify the response
         $response->assertStatus(200);
-        $response->assertViewIs('welcome');
+        $response->assertViewIs('index');
         $response->assertViewHas('dishes');
 
         // Verify the sorting order

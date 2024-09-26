@@ -5,9 +5,6 @@ namespace Tests\Feature;
 use App\Models\Dish;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class DishTest extends TestCase
@@ -27,7 +24,7 @@ class DishTest extends TestCase
         $response = $this->actingAs($user)->get('/dishes');
 
         $response->assertStatus(200);
-        $response->assertViewIs('welcome');
+        $response->assertViewIs('index');
         $response->assertViewHas('dishes');
     }
 
