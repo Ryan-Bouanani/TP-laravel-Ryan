@@ -28,10 +28,12 @@ class DishTest extends TestCase
         $response->assertViewHas('dishes');
     }
 
+
+
     /**
      * Tests the dish editing functionality
      */
-    public function test_edit_dishes(): void
+    public function test_edit_dishes_as_admin(): void
     {
         // Créer un utilisateur admin
         $admin = User::factory()->create();
@@ -48,9 +50,15 @@ class DishTest extends TestCase
         $response->assertViewIs('dishes.edit');
         $response->assertViewHas('dish', $dish);
         $response->assertViewHas('users');
+    }
 
+    public function test_edit_dishes_as_non_admin(): void {
         // Tester avec un utilisateur non-admin
         $user = User::factory()->create();
+
+        // Créer un plat
+        $dish = Dish::factory()->for($user, 'user')->create();
+
         $response = $this
             ->actingAs($user)
             ->get("/dishes/{$dish->slug}/edit");
@@ -61,16 +69,20 @@ class DishTest extends TestCase
         $response->assertViewMissing('users');
     }
 
+
+
     /**
      * Tests the dish updating functionality
      */
     public function test_update_dishes(): void {
 
-        // Créer un plat
-        $dish = Dish::factory()->create();
-
         // Créer un utilisateur
-        $user = $dish->user;
+        $user = User::factory()->create();
+
+        // Créer un plat
+        $dish = Dish::factory()->for($user, 'user')->create();
+
+
 
         $updatedData = [
             'id' => $dish->id,
@@ -102,12 +114,13 @@ class DishTest extends TestCase
     }
 
 
+
     /**
      * Tests the dish create functionality
      */
     public function test_create_dishes_as_admin(): void
     {
-        // Créer un nombre spécifique d'utilisateurs pour ce test
+        // Créer un nombre spécifique d'utilisateurs pour que chaque utilisateur est présent dans la $response
         $numberOfUsers = 3;
         $users = User::factory()->count($numberOfUsers)->create();
 
@@ -221,9 +234,8 @@ class DishTest extends TestCase
         $user = User::factory()->create();
 
         // Créer un plat existant avec le même utilisateur
-        $existingDish = Dish::factory()->create([
+        $existingDish = Dish::factory()->for($user,'user')->create([
             'name' => 'Plat Existant',
-            'user_id' => $user->id
         ]);
 
         $dishData = [
@@ -240,8 +252,6 @@ class DishTest extends TestCase
 
         // Vérifier qu'un seul plat existe
         $this->assertDatabaseCount('dishes', 1);
-
-        $this->assertDatabaseMissing('dishes', ['name' => $dishData['name'], 'user_id' => $dishData['user_id']]);
     }
 
 
@@ -306,6 +316,7 @@ class DishTest extends TestCase
             'id' => $dish->id,
         ]);
     }
+
 
 
     /**

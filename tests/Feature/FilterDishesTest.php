@@ -18,9 +18,7 @@ class FilterDishesTest extends TestCase
     public function test_filter_order_desc_by_id()
     {
         $user = User::factory()->create();
-        $dish1 = Dish::factory()->create();
-        $dish2 = Dish::factory()->create();
-        $dish3 = Dish::factory()->create();
+        $dishes = Dish::factory()->count(5)->create();
 
         // Simuler une recherche par créateur
         $response = $this->actingAs($user)
@@ -31,19 +29,23 @@ class FilterDishesTest extends TestCase
         $response->assertViewIs('index');
         $response->assertViewHas('dishes');
 
-        // Verify the sorting order
-        $dishes = $response->original['dishes'];
-        $this->assertEquals($dish3->id, $dishes->first()->id);
-        $this->assertEquals($dish1->id, $dishes->last()->id);
+        // Récupérer les plats de la vue
+        $returnedDishes = $response->viewData('dishes');
 
+        // Créer une collection triée manuellement pour la comparaison
+        $sortedDishes = $dishes->sortByDesc('id')->values();
+
+        // Vérifier que l'ordre des plats retournés correspond à l'ordre trié manuellement
+        $this->assertEquals(
+            $sortedDishes->pluck('id')->toArray(),
+            $returnedDishes->pluck('id')->toArray()
+        );
     }
 
     public function test_filter_order_asc_by_id()
     {
         $user = User::factory()->create();
-        $dish1 = Dish::factory()->create();
-        $dish2 = Dish::factory()->create();
-        $dish3 = Dish::factory()->create();
+        $dishes = Dish::factory()->count(5)->create();
 
         // Simuler une recherche par créateur
         $response = $this->actingAs($user)
@@ -54,12 +56,19 @@ class FilterDishesTest extends TestCase
         $response->assertViewIs('index');
         $response->assertViewHas('dishes');
 
-        // Verify the sorting order
-        $dishes = $response->original['dishes'];
-        $this->assertEquals($dish1->id, $dishes->first()->id);
-        $this->assertEquals($dish3->id, $dishes->last()->id);
+        // Récupérer les plats de la vue
+        $returnedDishes = $response->viewData('dishes');
 
+        // Créer une collection triée manuellement pour la comparaison
+        $sortedDishes = $dishes->sortBy('id')->values();
+
+        // Vérifier que l'ordre des plats retournés correspond à l'ordre trié manuellement
+        $this->assertEquals(
+            $sortedDishes->pluck('id')->toArray(),
+            $returnedDishes->pluck('id')->toArray()
+        );
     }
+
 
 
     /**
@@ -88,9 +97,13 @@ class FilterDishesTest extends TestCase
     public function test_filter_order_desc_by_name()
     {
         $user = User::factory()->create();
-        $dish1 = Dish::factory()->create(['name' => 'a']);
-        $dish2 = Dish::factory()->create(['name' => 'b']);
-        $dish3 = Dish::factory()->create(['name' => 'c']);
+        $dishes = Dish::factory()->createMany([
+            ['name' => 'a'],
+            ['name' => 'b'],
+            ['name' => 'c'],
+            ['name' => 'd'],
+            ['name' => 'e'],
+        ]);
 
         // Simuler une recherche par créateur
         $response = $this->actingAs($user)
@@ -101,19 +114,29 @@ class FilterDishesTest extends TestCase
         $response->assertViewIs('index');
         $response->assertViewHas('dishes');
 
-        // Verify the sorting order
-        $dishes = $response->original['dishes'];
-        $this->assertEquals($dish3->id, $dishes->first()->id);
-        $this->assertEquals($dish1->id, $dishes->last()->id);
+        // Récupérer les plats de la vue
+        $returnedDishes = $response->viewData('dishes');
 
+        // Créer une collection triée manuellement pour la comparaison
+        $sortedDishes = $dishes->sortByDesc('name')->values();
+
+        // Vérifier que l'ordre des plats retournés correspond à l'ordre trié manuellement
+        $this->assertEquals(
+            $sortedDishes->pluck('name')->toArray(),
+            $returnedDishes->pluck('name')->toArray()
+        );
     }
 
     public function test_filter_order_asc_by_name()
     {
         $user = User::factory()->create();
-        $dish1 = Dish::factory()->create(['name' => 'a']);
-        $dish2 = Dish::factory()->create(['name' => 'b']);
-        $dish3 = Dish::factory()->create(['name' => 'c']);
+        $dishes = Dish::factory()->createMany([
+            ['name' => 'a'],
+            ['name' => 'b'],
+            ['name' => 'c'],
+            ['name' => 'd'],
+            ['name' => 'e'],
+        ]);
 
         // Simuler une recherche par créateur
         $response = $this->actingAs($user)
@@ -124,12 +147,20 @@ class FilterDishesTest extends TestCase
         $response->assertViewIs('index');
         $response->assertViewHas('dishes');
 
-        // Verify the sorting order
-        $dishes = $response->original['dishes'];
-        $this->assertEquals($dish1->id, $dishes->first()->id);
-        $this->assertEquals($dish3->id, $dishes->last()->id);
+        // Récupérer les plats de la vue
+        $returnedDishes = $response->viewData('dishes');
 
+        // Créer une collection triée manuellement pour la comparaison
+        $sortedDishes = $dishes->sortBy('name')->values();
+
+        // Vérifier que l'ordre des plats retournés correspond à l'ordre trié manuellement
+        $this->assertEquals(
+            $sortedDishes->pluck('name')->toArray(),
+            $returnedDishes->pluck('name')->toArray()
+        );
     }
+
+
 
     /**
      * Tests the filter by creator functionality
@@ -153,20 +184,24 @@ class FilterDishesTest extends TestCase
 
     public function test_filter_order_desc_by_creator()
     {
-        $user1 = User::factory()->create(['name' => 'a']);
-        $user2 = User::factory()->create(['name' => 'b']);
-        $user3 = User::factory()->create(['name' => 'c']);
+        $users = User::factory()->createMany([
+            ['name' => 'a'],
+            ['name' => 'b'],
+            ['name' => 'c'],
+            ['name' => 'd'],
+            ['name' => 'e'],
+        ]);
 
-        $dish1 = Dish::factory()->create();
-        $dish2 = Dish::factory()->create();
-        $dish3 = Dish::factory()->create();
-
-        $dish1->favoriteByUsers()->attach($user1);
-        $dish2->favoriteByUsers()->attach($user2);
-        $dish3->favoriteByUsers()->attach($user3);
+        $dishes = Dish::factory()->createMany([
+            ['user_id' => $users[0]],
+            ['user_id' => $users[1]],
+            ['user_id' => $users[2]],
+            ['user_id' => $users[3]],
+            ['user_id' => $users[4]],
+        ]);
 
         // Simuler une recherche par créateur
-        $response = $this->actingAs($user1)
+        $response = $this->actingAs($users[0])
             ->get(route('dishes.index', ['sort' => 'user_id', 'order' => 'desc']));;
 
         // Verify the response
@@ -174,29 +209,40 @@ class FilterDishesTest extends TestCase
         $response->assertViewIs('index');
         $response->assertViewHas('dishes');
 
-        // Verify the sorting order
-        $dishes = $response->original['dishes'];
-        $this->assertEquals($dish3->id, $dishes->first()->id);
-        $this->assertEquals($dish1->id, $dishes->last()->id);
+        // Récupérer les plats de la vue
+        $returnedDishes = $response->viewData('dishes');
+
+        // Créer une collection triée manuellement pour la comparaison
+        $sortedDishes = $dishes->sortByDesc('user.name')->values();
+
+        // Vérifier que l'ordre des plats retournés correspond à l'ordre trié manuellement
+        $this->assertEquals(
+            $sortedDishes->pluck('user.name')->toArray(),
+            $returnedDishes->pluck('user.name')->toArray()
+        );
 
     }
 
     public function test_filter_order_asc_by_creator()
     {
-        $user1 = User::factory()->create(['name' => 'a']);
-        $user2 = User::factory()->create(['name' => 'b']);
-        $user3 = User::factory()->create(['name' => 'c']);
+        $users = User::factory()->createMany([
+            ['name' => 'a'],
+            ['name' => 'b'],
+            ['name' => 'c'],
+            ['name' => 'd'],
+            ['name' => 'e'],
+        ]);
 
-        $dish1 = Dish::factory()->create();
-        $dish2 = Dish::factory()->create();
-        $dish3 = Dish::factory()->create();
-
-        $dish1->favoriteByUsers()->attach($user1);
-        $dish2->favoriteByUsers()->attach($user2);
-        $dish3->favoriteByUsers()->attach($user3);
+        $dishes = Dish::factory()->createMany([
+            ['user_id' => $users[0]],
+            ['user_id' => $users[1]],
+            ['user_id' => $users[2]],
+            ['user_id' => $users[3]],
+            ['user_id' => $users[4]],
+        ]);
 
         // Simuler une recherche par créateur
-        $response = $this->actingAs($user1)
+        $response = $this->actingAs($users[0])
             ->get(route('dishes.index', ['sort' => 'user_id', 'order' => 'asc']));;
 
         // Verify the response
@@ -204,12 +250,19 @@ class FilterDishesTest extends TestCase
         $response->assertViewIs('index');
         $response->assertViewHas('dishes');
 
-        // Verify the sorting order
-        $dishes = $response->original['dishes'];
-        $this->assertEquals($dish1->id, $dishes->first()->id);
-        $this->assertEquals($dish3->id, $dishes->last()->id);
+        // Récupérer les plats de la vue
+        $returnedDishes = $response->viewData('dishes');
 
+        // Créer une collection triée manuellement pour la comparaison
+        $sortedDishes = $dishes->sortBy('user.name')->values();
+
+        // Vérifier que l'ordre des noms des créateurs des plats retournés correspond à l'ordre trié manuellement
+        $this->assertEquals(
+            $sortedDishes->pluck('user.name')->toArray(),
+            $returnedDishes->pluck('user.name')->toArray()
+        );
     }
+
 
 
     /**
@@ -241,13 +294,12 @@ class FilterDishesTest extends TestCase
     {
         // Create dishes with different numbers of likes and assign them to a user
         $user = User::factory()->create();
-        $dish1 = Dish::factory()->create();
-        $dish2 = Dish::factory()->create();
-        $dish3 = Dish::factory()->create();
+        $dishes = Dish::factory(3)->for($user, 'user')->createMany();
 
-        $dish3->favoriteByUsers()->attach(User::factory()->count(5)->create());
-        $dish2->favoriteByUsers()->attach(User::factory()->count(4)->create());
-        $dish1->favoriteByUsers()->attach(User::factory()->count(3)->create());
+
+        $dishes[2]->favoriteByUsers()->attach(User::factory()->count(5)->create());
+        $dishes[1]->favoriteByUsers()->attach(User::factory()->count(4)->create());
+        $dishes[0]->favoriteByUsers()->attach(User::factory()->count(3)->create());
 
         // Simulate a search by minimum likes and sort order
         $response = $this->actingAs($user)
@@ -258,23 +310,32 @@ class FilterDishesTest extends TestCase
         $response->assertViewIs('index');
         $response->assertViewHas('dishes');
 
-        // Verify the sorting order
-        $dishes = $response->original['dishes'];
-        $this->assertEquals($dish3->id, $dishes->first()->id);
-        $this->assertEquals($dish1->id, $dishes->last()->id);
+        // Récupérer les plats de la vue
+        $returnedDishes = $response->viewData('dishes');
+
+        // Créer une collection triée manuellement pour la comparaison
+        // $sortedDishes = $dishes->sortByDesc('favoriteByUsers')->values();
+        $sortedDishes = $dishes->sortByDesc(function ($dish) {
+            return $dish->favoriteByUsers()->count();
+        })->values();
+
+        // Vérifier que l'ordre des plats retournés correspond à l'ordre trié manuellement
+        $this->assertEquals(
+            $sortedDishes->pluck('id')->toArray(),
+            $returnedDishes->pluck('id')->toArray()
+        );
     }
 
     public function test_filter_order_asc_by_min_likes()
     {
         // Create dishes with different numbers of likes and assign them to a user
         $user = User::factory()->create();
-        $dish1 = Dish::factory()->create(['user_id' => $user->id]);
-        $dish2 = Dish::factory()->create(['user_id' => $user->id]);
-        $dish3 = Dish::factory()->create(['user_id' => $user->id]);
+        $dishes = Dish::factory(3)->for($user, 'user')->createMany();
 
-        $dish3->favoriteByUsers()->attach(User::factory()->count(5)->create());
-        $dish2->favoriteByUsers()->attach(User::factory()->count(4)->create());
-        $dish1->favoriteByUsers()->attach(User::factory()->count(3)->create());
+
+        $dishes[2]->favoriteByUsers()->attach(User::factory()->count(5)->create());
+        $dishes[1]->favoriteByUsers()->attach(User::factory()->count(4)->create());
+        $dishes[0]->favoriteByUsers()->attach(User::factory()->count(3)->create());
 
         // Simulate a search by minimum likes and sort order
         $response = $this->actingAs($user)
@@ -285,11 +346,18 @@ class FilterDishesTest extends TestCase
         $response->assertViewIs('index');
         $response->assertViewHas('dishes');
 
-        // Verify the sorting order
-        $dishes = $response->original['dishes'];
+        // Récupérer les plats de la vue
+        $returnedDishes = $response->viewData('dishes');
 
-        // Vérifier que les plats sont bien triés par ID ascendant
-        $this->assertEquals($dish1->id, $dishes->first()->id); // Assuming dish1 has a lower ID
-        $this->assertEquals($dish3->id, $dishes->last()->id);
+        // Créer une collection triée manuellement pour la comparaison
+        $sortedDishes = $dishes->sortBy(function ($dish) {
+            return $dish->favoriteByUsers()->count();
+        })->values();
+
+        // Vérifier que l'ordre des plats retournés correspond à l'ordre trié manuellement
+        $this->assertEquals(
+            $sortedDishes->pluck('id')->toArray(),
+            $returnedDishes->pluck('id')->toArray()
+        );
     }
 }
