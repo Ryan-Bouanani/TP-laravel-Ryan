@@ -23,7 +23,7 @@ class AddToFavoriteDishTest extends TestCase
 
         // Test d'ajout aux favoris
         $response = $this->actingAs($user)
-            ->post(route('addFavoriteDishToUser', $user->id), [
+            ->post(route('toggleFavoriteDish', $user->id), [
                 'dish_id' => $dish->id
             ]);
 
@@ -36,7 +36,7 @@ class AddToFavoriteDishTest extends TestCase
 
         // Test de retrait des favoris (en réexécutant la même action)
         $response = $this->actingAs($user)
-            ->post(route('addFavoriteDishToUser', $user->id), [
+            ->post(route('toggleFavoriteDish', $user->id), [
                 'dish_id' => $dish->id
             ]);
 

@@ -60,17 +60,23 @@ class ProfileController extends Controller
         return Redirect::to('/');
     }
 
-    public function addFavoriteDishToUser(Request $request, User $user): RedirectResponse {
+
+    /**
+     * Toggle favorite dish for a user.
+     *
+     * @param Request $request
+     * @param User $user
+     * @return RedirectResponse
+     */
+    public function toggleFavoriteDish(Request $request, User $user): RedirectResponse {
         $dish_id = $request->input('dish_id');
 
-        // Si l'utilisateur à déjà le dishes en favoris alors on l'enlève sinon on l'ajoute
-        if ($user->favoriteDishes()->find($dish_id)) {
-            $user->favoriteDishes()->detach([$dish_id]);
-            $message = 'Plat retiré des favoris !';
-        } else {
-            $user->favoriteDishes()->attach([$dish_id]);
-            $message = 'Plat ajouté aux favoris !';
-        }
+        // Toggle the favorite status of the dish for the user
+        $user->favoriteDishes()->toggle([$dish_id]);
+
+        // Check if the dish is now a favorite to set the appropriate message
+        $message = $user->favoriteDishes()->find($dish_id) ? 'Plat ajouté aux favoris !' : 'Plat retiré des favoris !';
+
         return redirect()->route('dishes.index')->with('success', $message);
     }
 }

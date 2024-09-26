@@ -61,7 +61,7 @@
             <tr>
                 <td>{{ $dish->id }}</td>
                 <td>
-                    <form action="{{ route('addFavoriteDishToUser', Auth::user()->id) }}" method="POST">
+                    <form action="{{ route('toggleFavoriteDish', Auth::user()->id) }}" method="POST">
                         @csrf
                         <input type="hidden" name="dish_id" value="{{$dish->id}}">
 
