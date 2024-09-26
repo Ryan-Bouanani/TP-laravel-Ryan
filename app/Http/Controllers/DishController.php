@@ -98,8 +98,6 @@ class DishController extends Controller
     /**
      * Store a new created dish in database.
      *
-     * This method handles the creation of a new dish.
-     *
      * @param StoreDishRequest $request The validated request containing dish data
      * @return \Illuminate\Http\RedirectResponse
      */

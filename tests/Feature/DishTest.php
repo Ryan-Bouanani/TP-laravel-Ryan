@@ -16,7 +16,7 @@ class DishTest extends TestCase
     use refreshDatabase;
 
     /**
-     * A basic feature test example.
+     * Tests a listing of the dishes
      */
     public function test_get_dishes(): void
     {
@@ -163,6 +163,10 @@ class DishTest extends TestCase
     }
 
 
+
+    /**
+     * Tests the dish store functionality
+     */
     public function test_store_dish_with_valid_data(): void
     {
         $user = User::factory()->create();
@@ -243,6 +247,11 @@ class DishTest extends TestCase
         $this->assertDatabaseMissing('dishes', ['name' => $dishData['name'], 'user_id' => $dishData['user_id']]);
     }
 
+
+
+    /**
+     * Tests the dish destroy functionality
+     */
     public function test_destroy_dishes_as_admin(): void {
 
         // Admins can delete any dish they wish, even if they are not the dish's creator.
@@ -301,6 +310,10 @@ class DishTest extends TestCase
         ]);
     }
 
+
+    /**
+     * Tests the dish detail display functionality
+     */
     public function test_show_dish(): void {
         $dish = Dish::factory()->create();
         $user = $dish->user;
