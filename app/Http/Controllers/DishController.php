@@ -134,26 +134,29 @@ class DishController extends Controller
      * @param Request $request
      */
     private function filterDishes($query, $request) {
-        if ($request->filled('name')) {
-            $query->where('name', 'like', '%' . $request->input('name') . '%');
-        }
 
-        if ($request->filled('creator')) {
-            $query->whereHas('user', function ($query) use ($request) {
+        // Filter by name if 'name' field is filled in the request
+        $query->when($request->filled('name'), function ($q) use ($request) {
+            $q->where('name', 'like', '%' . $request->input('name') . '%');
+        });
+
+        // Filter by creator if 'creator' field is filled in the request
+        $query->when($request->filled('creator'), function ($q) use ($request) {
+            $q->whereHas('user', function ($query) use ($request) {
                 $query->where('name', 'like', '%' . $request->input('creator') . '%');
             });
-        }
-        if ($request->filled('min_likes')) {
+        });
+
+        // Filter by minimum likes if 'min_likes' field is filled in the request
+        $query->when($request->filled('min_likes'), function ($q) use ($request) {
             $minLikes = $request->input('min_likes');
-            $query->has('favoriteByUsers',  '>=', $minLikes);
-        }
+            $q->has('favoriteByUsers', '>=', $minLikes);
+        });
 
-        // Handle min_likes filter (logic remains the same)
-        if ($request->input('sort') === 'likes') {
-
-           $query->withCount('favoriteByUsers')->orderBy('favorite_By_Users_count', $request->input('order'));
-
-        }
+        // Sort by likes if 'sort' field is 'likes' in the request
+        $query->when($request->input('sort') === 'likes', function ($q) use ($request) {
+            $q->withCount('favoriteByUsers')->orderBy('favorite_by_users_count', $request->input('order'));
+        });
     }
 
 

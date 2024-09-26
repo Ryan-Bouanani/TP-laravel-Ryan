@@ -29,9 +29,8 @@ class DishObserver
      */
     public function deleting(Dish $dish): void
     {
-        // Supprimer toutes les entrées dans la table pivot favorites liées à ce plat
-        DB::table('favorites')->where('dish_id', $dish->id)
-            ->delete();
+        // Detach all entries in the pivot table 'favorites' related to this dish
+        $dish->favoriteByUsers()->detach();
     }
 
     /**
