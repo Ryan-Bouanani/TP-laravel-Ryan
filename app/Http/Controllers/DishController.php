@@ -18,7 +18,7 @@ class DishController extends Controller
      * @return \Illuminate\View\View
      */
     public function index(Request $request) {
-        $query = Dish::query();
+        $query = Dish::with('user');
 
         // Apply filters based on search terms
         $this->filterDishes($query, $request);
@@ -152,11 +152,6 @@ class DishController extends Controller
             $minLikes = $request->input('min_likes');
             $q->has('favoriteByUsers', '>=', $minLikes);
         });
-
-        // Sort by likes if 'sort' field is 'likes' in the request
-        $query->when($request->input('sort') === 'likes', function ($q) use ($request) {
-            $q->withCount('favoriteByUsers')->orderBy('favorite_by_users_count', $request->input('order'));
-        });
     }
 
 
@@ -168,12 +163,17 @@ class DishController extends Controller
      * @return array
      */
     private function sortDishes($query, $request) {
+
         $sortField = $request->input('sort', 'id');
         $sortOrder = $request->input('order', 'asc');
 
-        if ($sortField !== 'likes') {
-            $query->orderBy($sortField, $sortOrder);
-        }
+         match($sortField) {
+            'likes'=>$query->withCount('favoriteByUsers')->orderBy('favorite_by_users_count', $sortOrder),
+            'creator' => $query->join('users', 'users.id', '=', 'dishes.user_id')
+            ->orderBy('users.name', $sortOrder),
+            default => $query->orderBy($sortField, $sortOrder),
+        };
+
         return [
             'sortField' => $sortField,
             'sortOrder'=> $sortOrder

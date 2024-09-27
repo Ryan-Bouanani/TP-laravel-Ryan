@@ -184,25 +184,16 @@ class FilterDishesTest extends TestCase
 
     public function test_filter_order_desc_by_creator()
     {
-        $users = User::factory()->createMany([
-            ['name' => 'a'],
-            ['name' => 'b'],
-            ['name' => 'c'],
-            ['name' => 'd'],
-            ['name' => 'e'],
-        ]);
+        $users = User::factory()->count(5)->create();
 
-        $dishes = Dish::factory()->createMany([
-            ['user_id' => $users[0]],
-            ['user_id' => $users[1]],
-            ['user_id' => $users[2]],
-            ['user_id' => $users[3]],
-            ['user_id' => $users[4]],
-        ]);
+        $dishes = collect();
+        foreach ($users as $user) {
+            $dishes->push(Dish::factory()->for($user, 'user')->create());
+        }
 
         // Simuler une recherche par créateur
         $response = $this->actingAs($users[0])
-            ->get(route('dishes.index', ['sort' => 'user_id', 'order' => 'desc']));;
+            ->get(route('dishes.index', ['sort' => 'creator', 'order' => 'desc']));;
 
         // Verify the response
         $response->assertStatus(200);
@@ -215,35 +206,26 @@ class FilterDishesTest extends TestCase
         // Créer une collection triée manuellement pour la comparaison
         $sortedDishes = $dishes->sortByDesc('user.name')->values();
 
+
         // Vérifier que l'ordre des plats retournés correspond à l'ordre trié manuellement
         $this->assertEquals(
-            $sortedDishes->pluck('user.name')->toArray(),
-            $returnedDishes->pluck('user.name')->toArray()
+            $sortedDishes->pluck('user.name'),
+            $returnedDishes->pluck('user.name')
         );
-
     }
 
     public function test_filter_order_asc_by_creator()
     {
-        $users = User::factory()->createMany([
-            ['name' => 'a'],
-            ['name' => 'b'],
-            ['name' => 'c'],
-            ['name' => 'd'],
-            ['name' => 'e'],
-        ]);
+        $users = User::factory()->count(5)->create();
 
-        $dishes = Dish::factory()->createMany([
-            ['user_id' => $users[0]],
-            ['user_id' => $users[1]],
-            ['user_id' => $users[2]],
-            ['user_id' => $users[3]],
-            ['user_id' => $users[4]],
-        ]);
+        $dishes = collect();
+        foreach ($users as $user) {
+            $dishes->push(Dish::factory()->for($user, 'user')->create());
+        }
 
         // Simuler une recherche par créateur
         $response = $this->actingAs($users[0])
-            ->get(route('dishes.index', ['sort' => 'user_id', 'order' => 'asc']));;
+            ->get(route('dishes.index', ['sort' => 'creator', 'order' => 'asc']));;
 
         // Verify the response
         $response->assertStatus(200);
@@ -258,8 +240,8 @@ class FilterDishesTest extends TestCase
 
         // Vérifier que l'ordre des noms des créateurs des plats retournés correspond à l'ordre trié manuellement
         $this->assertEquals(
-            $sortedDishes->pluck('user.name')->toArray(),
-            $returnedDishes->pluck('user.name')->toArray()
+            $sortedDishes->pluck('user.name'),
+            $returnedDishes->pluck('user.name')
         );
     }
 
@@ -314,15 +296,14 @@ class FilterDishesTest extends TestCase
         $returnedDishes = $response->viewData('dishes');
 
         // Créer une collection triée manuellement pour la comparaison
-        // $sortedDishes = $dishes->sortByDesc('favoriteByUsers')->values();
         $sortedDishes = $dishes->sortByDesc(function ($dish) {
             return $dish->favoriteByUsers()->count();
         })->values();
 
         // Vérifier que l'ordre des plats retournés correspond à l'ordre trié manuellement
         $this->assertEquals(
-            $sortedDishes->pluck('id')->toArray(),
-            $returnedDishes->pluck('id')->toArray()
+            $sortedDishes->pluck('id'),
+            $returnedDishes->pluck('id')
         );
     }
 

@@ -43,7 +43,7 @@
                     href="{{ route('dishes.index', array_merge(request()->query(), ['sort' => 'name', 'order' => ($sortField === 'name' && $sortOrder === 'asc') ? 'desc' : 'asc'])) }}">Titre</a>
             </th>
             <th scope="col"><a
-                    href="{{ route('dishes.index', array_merge(request()->query(), ['sort' => 'user_id', 'order' => ($sortField === 'user_id' && $sortOrder === 'asc') ? 'desc' : 'asc'])) }}">Créateur</a>
+                    href="{{ route('dishes.index', array_merge(request()->query(), ['sort' => 'creator', 'order' => ($sortField === 'creator' && $sortOrder === 'asc') ? 'desc' : 'asc'])) }}">Créateur</a>
             </th>
 
             <!--['name'=>request('name')-->
