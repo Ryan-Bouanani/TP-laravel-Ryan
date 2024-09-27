@@ -323,8 +323,8 @@ class DishTest extends TestCase
      * Tests the dish detail display functionality
      */
     public function test_show_dish(): void {
+        $user = User::factory()->create();
         $dish = Dish::factory()->create();
-        $user = $dish->user;
 
         $response = $this->actingAs($user)
             ->get(route('dishes.show', $dish->slug));
